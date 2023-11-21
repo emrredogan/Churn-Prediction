@@ -1,4 +1,5 @@
 import pandas as pd
+from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import  SimpleImputer, IterativeImputer
 from sklearn.preprocessing import RobustScaler, StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
@@ -39,12 +40,13 @@ class Preprocessor:
     
     def label_encoder(data, column_name):
         label_encoder = LabelEncoder()
-        data[column_name + '_encoded'] = label_encoder.fit_transform(data[column_name])
+        data[column_name] = label_encoder.fit_transform(data[column_name])
         return data 
     
     def one_hot_encoder(data, column_name):
         ohe = pd.get_dummies(data[column_name], prefix=column_name)
         data = pd.concat([data, ohe], axis=1)
+        del data[column_name]
         return data 
     
 

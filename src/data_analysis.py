@@ -5,6 +5,14 @@ import seaborn as sns
 class DataAnalysis:
 
     def categorize_columns(data):
+        '''
+        categorize columns into numeric, categoric and date types
+        input: 
+            data
+        output:
+            three lists
+        '''
+        print('do2')
         numeric_cols = []
         categoric_cols = []
         date_cols = []
@@ -21,6 +29,7 @@ class DataAnalysis:
     
 
     def descriptive_stats_for_numeric_cols(data):
+        print('do1')
         result_df = pd.DataFrame(columns=['Feature_Name', 'Count', 'Missing_Count', 'Missing_Percentage' ,'Min', 'Max',\
                                           'Std', '25P', '50P', '75P', '95P'])
 
