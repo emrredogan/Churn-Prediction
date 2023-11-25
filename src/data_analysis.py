@@ -12,7 +12,7 @@ class DataAnalysis:
         output:
             three lists
         '''
-        print('do2')
+        print('Starting categorize columns...')
         numeric_cols = []
         categoric_cols = []
         date_cols = []
@@ -28,8 +28,21 @@ class DataAnalysis:
         return numeric_cols, categoric_cols, date_cols
     
 
+    def check_dtype_cols(data, col_types_list):
+        '''
+        Check data types of each categorize list.
+        '''
+        for column in data.columns:
+            if column in col_types_list:
+                print(f"{column} type is {data[column].dtype}") 
+                print(f"Check the first 3 rows of the column: \n{data[data[column].notnull()][:3][column]}")
+            else:
+                pass 
+
     def descriptive_stats_for_numeric_cols(data):
-        print('do1')
+        '''
+        Calculate descriptive stats for each numeric feature.
+        '''
         result_df = pd.DataFrame(columns=['Feature_Name', 'Count', 'Missing_Count', 'Missing_Percentage' ,'Min', 'Max',\
                                           'Std', '25P', '50P', '75P', '95P'])
 
@@ -63,6 +76,9 @@ class DataAnalysis:
 
     
     def description_for_categoric_cols(data):
+        '''
+        Calculate description points for categoric features
+        '''
         result_df = pd.DataFrame(columns=['Feature_Name', 'Count', 'Missing_Count', 'Missing_Percentage', 'Value_Counts', \
                                           'Number_Of_Unique', 'Mode'])
         
@@ -71,8 +87,8 @@ class DataAnalysis:
             missing_count = data[column].isna().sum()
             missing_percentage = missing_count / len(data[column])
             value_counts = data[column].value_counts()
-            unique_values = data[column].unique()
-            mode_ = data[column].mod().values[0]
+            unique_values = data[column].nunique()
+            mode_ = data[column].mode().values[0]
 
             result_df = result_df.append({
                 'Feature_Name': column,
@@ -116,3 +132,12 @@ class DataAnalysis:
         plt.title(f'Scatter Plot of {feature_name1} vs {feature_name2}')
         plt.show()
         
+    def bar_plot_categoric_feat(data, feature_name):
+        category_counts = data[feature_name].value_counts()
+        plt.figure(figsize=(8,6))
+        category_counts.plot(kind='bar', color='skyblue')
+        plt.title(f'Category Counts for {feature_name}')
+        plt.xlabel(f'Categories for {feature_name}')
+        plt.ylabel('Counts')
+        plt.xticks(rotation=0)
+        plt.show()

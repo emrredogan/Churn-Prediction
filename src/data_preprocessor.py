@@ -9,14 +9,28 @@ import xgboost as xgb
 class Preprocessor:
 
     def check_duplicate_cols(data):
+        '''
+        Check duplicate columns
+        '''
         duplicate_cols = data.T.duplicated()
         duplicate_columns = data.columns[duplicate_cols].tolist()
         return duplicate_columns
     
     def check_duplicate_rows(data):
+        '''
+        Check duplicade rows 
+        '''
         duplicate_rows = data[data.duplicated()]
         return duplicate_rows
     
+    def return_only_missing_counts(data):
+        for column in data.columns:
+            if data[column].isna().sum() != 0:
+                print(f"{column} has {data[column].isna().sum()} missing values.")
+            else:
+                #print(f"{column} has not missing value.")
+                pass
+
 
     def simple_imputer(data, strategy):
         imputer = SimpleImputer(strategy=strategy)
@@ -55,7 +69,7 @@ class Preprocessor:
         return X_train, X_test, y_train, y_test
     
     def calculate_univariate_gini(data, target_name, X_test, y_test):
-        univariate_gini = {}
+        univariate_gini = []
 
         for feature in data.columns:
             if feature != target_name:
@@ -69,7 +83,7 @@ class Preprocessor:
                 roc_auc = roc_auc_score(y_test, y_pred)
                 gini = 2 * roc_auc - 1 
 
-                univariate_gini[feature] = gini 
+                univariate_gini.append((feature,gini))
         
-        return univariate_gini
+        return pd.DataFrame(univariate_gini, columns=['Feature_Name', 'Gini_Score'])
     
