@@ -5,6 +5,8 @@ from sklearn.preprocessing import RobustScaler, StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import  roc_auc_score
 import xgboost as xgb 
+import matplotlib.pyplot as plt
+import seaborn as sns 
 
 class Preprocessor:
 
@@ -87,3 +89,42 @@ class Preprocessor:
         
         return pd.DataFrame(univariate_gini, columns=['Feature_Name', 'Gini_Score'])
     
+
+    def corr_heatmap(data):
+        plt.figure(figsize=(20,15))
+        sns.heatmap(data.corr(), annot=True, cmap=plt.cm.PuBu)
+        plt.show()
+
+    
+    def correlation_elimination(data, gini_df, threshold=0.70):
+        '''
+        Remove highly correlated feature (above threshold) that has lower correlation with target.
+        '''
+        correlation_matrix = data.corr()
+        highly_correlated = correlation_matrix[(correlation_matrix > threshold) & (correlation_matrix < 1.0)].stack().reset_index()
+        highly_correlated.columns = ['Variable_1', 'Variable_2', 'Correlation']
+
+        keep_dict = {}
+        drop_dict = {}
+
+        for index, row in highly_correlated.iterrows():
+            var1 = row['Variable_1']
+            var2 = row['Variable_2']
+    
+            if var1 in gini_df['Feature_Name'].values and var2 in gini_df['Feature_Name'].values:
+                gini_var1 = gini_df.loc[gini_df['Feature_Name'] == var1, 'Gini_Score'].values[0]
+                gini_var2 = gini_df.loc[gini_df['Feature_Name'] == var2, 'Gini_Score'].values[0]
+        
+                if gini_var1 >= gini_var2:
+                    keep_dict[var1] = gini_var1
+                    drop_dict[var2] = gini_var2
+                else:
+                    keep_dict[var2] = gini_var2
+                    drop_dict[var1] = gini_var1
+
+        keep_list = list(keep_dict.keys())
+        drop_list = list(drop_dict.keys())
+
+        return drop_list, keep_list
+
+

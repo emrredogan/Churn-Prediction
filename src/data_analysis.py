@@ -134,8 +134,8 @@ class DataAnalysis:
         
     def bar_plot_categoric_feat(data, feature_name):
         category_counts = data[feature_name].value_counts()
-        plt.figure(figsize=(8,6))
-        category_counts.plot(kind='bar', color='skyblue')
+        plt.figure(figsize=(6,4))
+        category_counts.plot(kind='bar', color='orange')
         plt.title(f'Category Counts for {feature_name}')
         plt.xlabel(f'Categories for {feature_name}')
         plt.ylabel('Counts')
